@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BackupToHtmlConsole": {
+      "commandName": "Project",
+      "commandLineArgs": "--environment Development"
+    }
+  }
+}

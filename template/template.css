@@ -1,0 +1,31 @@
+html {
+    font-family: "Open Sans", sans-serif; /* this should be the rest of the output you got from Google fonts */
+}
+post {
+    display: block;
+    padding: 0px 10px;
+    border-width: 5px;
+    border-style: none none none dashed;
+    border-color: navy;
+}
+
+post h2{
+    border-width: 5px;
+    border-style: dashed none dashed none ;
+    border-color: navy;
+    padding: 10px 0px;
+    margin-bottom: 5px;
+}
+
+reply {
+    display: block;
+    margin: 25px 100px;
+    padding: 0px 10px;
+    border-width: 5px;
+    border-style: none none none dashed;
+    border-color: navy;
+}
+chatmeta {
+    display: block;
+    font-size: small;
+}

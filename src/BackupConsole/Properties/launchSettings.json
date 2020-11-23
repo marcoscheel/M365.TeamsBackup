@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BackupConsole": {
+      "commandName": "Project",
+      "commandLineArgs": "--environment Development"
+    }
+  }
+}
