@@ -40,7 +40,7 @@ namespace M365.TeamsBackup.Core.Data
             await SaveChatMessage(detail);
             await SaveMessageHostedContents(detail);
 
-            if (detail.DeletedDateTime != null)
+            if (detail.DeletedDateTime == null)
             {
                 await SaveMessageReplies();
             }
