@@ -145,7 +145,14 @@ namespace M365.TeamsBackup.Core.Data
             {
                 messageInfoNode.InnerHtml += " | Author: " + message.From.User.DisplayName;
             }
-
+            if (message.From?.User != null)
+            {
+                messageInfoNode.InnerHtml += " | Author: " + message.From.User.DisplayName;
+            }
+            if (message.From?.Application != null)
+            {
+                messageInfoNode.InnerHtml += " | Application: " + message.From.Application.DisplayName;
+            }
             if (message.DeletedDateTime != null)
             {
                 var messageBodyNode = htmlDocument.CreateElement("p");

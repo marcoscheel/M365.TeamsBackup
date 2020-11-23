@@ -339,5 +339,5 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
+# M365.TeamsBackup
 /data
-appsettings.Production.json
