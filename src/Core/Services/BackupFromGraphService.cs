@@ -3,6 +3,7 @@ using M365.TeamsBackup.Core.Services.Util;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +54,27 @@ namespace M365.TeamsBackup.Core.Services
 
             do { 
                 _Logger.LogTrace($"GraphUri: {teamsPageRequest.RequestUrl}");
-                var teamsPage = await teamsPageRequest.GetAsync();
+
+
+                IUserJoinedTeamsCollectionPage teamsPage = null;
+                for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+                {
+                    try
+                    {
+                        teamsPage = await teamsPageRequest.GetAsync();
+                        break;
+                    }
+                    catch (ServiceException mgsex)
+                    {
+                        if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                        {
+                            _Logger.LogError(mgsex, $"Team read page error: {teamsPageRequest.RequestUrl}");
+                            throw;
+                        }
+                    }
+                }
+
+
 
                 //Process all selected teams
                 foreach (var team in teamsPage)
@@ -75,9 +96,26 @@ namespace M365.TeamsBackup.Core.Services
                         });
                     do
                     {
-                        _Logger.LogTrace($"ChannelGraphUri: {channelPageRequest.RequestUrl}");
-                        var channelPage = await channelPageRequest.GetAsync();
-                        
+                        ITeamChannelsCollectionPage channelPage = null;
+                        for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+                        {
+                            try
+                            {
+                                _Logger.LogTrace($"ChannelGraphUri({i}): {channelPageRequest.RequestUrl}");
+                                channelPage = await channelPageRequest.GetAsync();
+                                break;
+                            }
+                            catch (ServiceException mgsex)
+                            {
+                                if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                                {
+                                    _Logger.LogError(mgsex, $"Team channel read page error: {channelPageRequest.RequestUrl}");
+                                    throw;
+                                }
+                            }
+                        }
+
+
                         //Process all channels
                         foreach (var channel in channelPage)
                         {
@@ -97,7 +135,24 @@ namespace M365.TeamsBackup.Core.Services
                                 do
                                 {
                                     _Logger.LogTrace($"MessageGraphUri: {messagePageRequest.RequestUrl}");
-                                    var messagePage = await messagePageRequest.GetAsync();
+
+                                    IChannelMessagesCollectionPage messagePage = null;
+                                    for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+                                    {
+                                        try
+                                        {
+                                            messagePage = await messagePageRequest.GetAsync();
+                                            break;
+                                        }
+                                        catch (ServiceException mgsex)
+                                        {
+                                            if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                                            {
+                                                _Logger.LogError(mgsex, $"Message read page error: {messagePageRequest.RequestUrl}");
+                                                throw;
+                                            }
+                                        }
+                                    }
 
                                     foreach (var message in messagePage)
                                     {

@@ -23,6 +23,7 @@ namespace M365.TeamsBackup.Core.Services
         public async Task Execute()
         {
             _Logger.LogInformation("Weclome to Demo Service");
+            await Task.Delay(100);
         }
     }
 }

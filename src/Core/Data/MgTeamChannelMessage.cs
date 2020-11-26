@@ -1,4 +1,5 @@
 ﻿using M365.TeamsBackup.Core.Services;
+using M365.TeamsBackup.Core.Services.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -53,8 +54,24 @@ namespace M365.TeamsBackup.Core.Data
             _Logger.LogTrace($"GraphURI: {detailRequest.RequestUrl}");
             try
             {
-                var detail = await detailRequest.GetAsync();
-                _Logger.LogTrace($"Message: {detail.Id}|{detail.Subject}|{detail.CreatedDateTime}");
+                ChatMessage detail = null;
+                for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+                {
+                    try
+                    {
+                        _Logger.LogTrace($"GraphURI({i}): {detailRequest.RequestUrl}");
+                        detail = await detailRequest.GetAsync();
+                        _Logger.LogTrace($"Message: {detail.Id}|{detail.Subject}|{detail.CreatedDateTime}");
+                        break;
+                    }
+                    catch (ServiceException mgsex)
+                    {
+                        if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                        {
+                            throw;
+                        }
+                    }
+                }
 
                 await Save(detail);
             }
@@ -74,13 +91,29 @@ namespace M365.TeamsBackup.Core.Data
         {
             //Request all properties
             var detailRequest = _GraphClientService.GetGraphClient(_Logger).Teams[_TeamId].Channels[_ChannelId].Messages[_MessageId].Replies.Request();
-            
             try
             {
                 do
                 {
-                    _Logger.LogTrace($"GraphURI: {detailRequest.RequestUrl}");
-                    var messageRepliesPage = await detailRequest.GetAsync();
+                    IChatMessageRepliesCollectionPage messageRepliesPage = null;
+                    for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+                    {
+                        try
+                        {
+                            _Logger.LogTrace($"GraphURI({i}): {detailRequest.RequestUrl}");
+                            messageRepliesPage = await detailRequest.GetAsync();
+
+                            break;
+                        }
+                        catch (ServiceException mgsex)
+                        {
+                            if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                            {
+                                throw;
+                            }
+                        }
+                    }
+
                     foreach (var messageReply in messageRepliesPage)
                     {
                         _Logger.LogTrace($"MessageReply: {messageReply.Id}|{messageReply.ReplyToId}|{messageReply.CreatedDateTime}");
@@ -92,18 +125,17 @@ namespace M365.TeamsBackup.Core.Data
                 }
                 while (detailRequest != null);
             }
-            catch (Microsoft.Graph.ServiceException messageReplyEx)
+            catch (Microsoft.Graph.ServiceException messageEx)
             {
-                if (messageReplyEx.StatusCode == System.Net.HttpStatusCode.NotFound)
+                if (messageEx.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
-                    _Logger.LogWarning(messageReplyEx, $"NotFound while processing reply messages: {detailRequest.RequestUrl}");
+                    _Logger.LogWarning(messageEx, $"NotFound while processing reply messages: {detailRequest.RequestUrl}");
                 }
                 else
                 {
-                    _Logger.LogError(messageReplyEx, $"Error while processing reply messages: {detailRequest.RequestUrl}");
+                    _Logger.LogError(messageEx, $"Error while processing reply message: {detailRequest.RequestUrl}");
                 }
             }
-
         }
         
         public async Task SaveChatMessage(ChatMessage message)
@@ -140,29 +172,35 @@ namespace M365.TeamsBackup.Core.Data
             do
             {
                 _Logger.LogTrace($"GraphURI: {detailRequest.RequestUrl}");
-                try
-                {
-                    var hostedContentPage = await detailRequest.GetAsync();
-                    foreach (var hostedContent in hostedContentPage)
-                    {
-                        _Logger.LogTrace($"HostedContent: {message.Id}|{hostedContent.Id}");
-                        list.Add(hostedContent);
-                        await SaveHostedContentBlob(message, hostedContent, detailRequestBuilder);
 
-                    }
-                    detailRequest = hostedContentPage.NextPageRequest;
-                }
-                catch(Microsoft.Graph.ServiceException hostedContentEx)
+                IChatMessageHostedContentsCollectionPage hostedContentPage = null;
+                for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
                 {
-                    if (hostedContentEx.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    try
                     {
-                        _Logger.LogWarning(hostedContentEx, $"NotFound while processing hosted content: {detailRequest.RequestUrl}");
+                        _Logger.LogTrace($"GraphURI({i}): {detailRequest.RequestUrl}");
+                        hostedContentPage = await detailRequest.GetAsync();
+                        break;
                     }
-                    else
+                    catch (ServiceException mgsex)
                     {
-                        _Logger.LogError(hostedContentEx, $"Error while processing hosted content: {detailRequest.RequestUrl}");
+                        if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                        {
+                            _Logger.LogWarning(mgsex, $"Error getting HostedContent page: {detailRequest.RequestUrl}");
+                            return;
+                        }
                     }
                 }
+
+
+                foreach (var hostedContent in hostedContentPage)
+                {
+                    _Logger.LogTrace($"HostedContent: {message.Id}|{hostedContent.Id}");
+                    list.Add(hostedContent);
+                    await SaveHostedContentBlob(message, hostedContent, detailRequestBuilder);
+
+                }
+                detailRequest = hostedContentPage.NextPageRequest;
             }
             while (detailRequest != null);
             if (list.Count > 0)
@@ -175,7 +213,32 @@ namespace M365.TeamsBackup.Core.Data
         public async Task SaveHostedContentBlob(ChatMessage message, ChatMessageHostedContent hostedContent, IChatMessageHostedContentsCollectionRequestBuilder detailRequestBuilder)
         {
             var messageHostedcontentRequest = detailRequestBuilder[hostedContent.Id].Content.Request();
-            var messageHostedcontentValue = await messageHostedcontentRequest.GetAsync();
+            
+            System.IO.Stream messageHostedcontentValue = null;
+            for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+            {
+                try
+                {
+                    _Logger.LogTrace($"GraphURI({i}): {messageHostedcontentRequest.RequestUrl}");
+                    messageHostedcontentValue = await messageHostedcontentRequest.GetAsync();
+                    break;
+                }
+                catch (ServiceException mgsex)
+                {
+                    if (mgsex.StatusCode == System.Net.HttpStatusCode.BadRequest)//Special case. hosted content will not return a 404 if not available :(
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                        {
+                            return;
+                        }
+                    }
+                }
+            }
+
 
             var blobFile = GetBackupMessageHostedContentBlob(_Options.Path, _TeamId, _ChannelId, message, hostedContent);
             using System.IO.FileStream fs = System.IO.File.Create(blobFile);
@@ -191,7 +254,7 @@ namespace M365.TeamsBackup.Core.Data
         }
         public const string MessageReplyFilePattern = "message.*.json";
 
-        public static string GetBackupMessageFile(string root, string teamId, string channelId, string messageId, string? messageReplyId = null)
+        public static string GetBackupMessageFile(string root, string teamId, string channelId, string messageId, string messageReplyId = null)
         {
             if (messageReplyId == null)
             {
@@ -214,7 +277,7 @@ namespace M365.TeamsBackup.Core.Data
             return GetBackupMessageHostedContentFile(root, teamId, channelId, message.Id, message.ReplyToId);
         }
 
-        public static string GetBackupMessageHostedContentFile(string root, string teamId, string channelId, string messageId, string? messageReplyId = null)
+        public static string GetBackupMessageHostedContentFile(string root, string teamId, string channelId, string messageId, string messageReplyId = null)
         {
             if (messageReplyId == null)
             {

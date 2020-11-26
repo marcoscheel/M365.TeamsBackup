@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30709.64
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackupConsole", "BackupConsole\BackupConsole.csproj", "{1D6D0186-7838-416A-AAAB-2677D556A70F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackupConsole", "BackupConsole\BackupConsole.csproj", "{1D6D0186-7838-416A-AAAB-2677D556A70F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Core", "Core\Core.csproj", "{01536E80-406C-4D60-B22B-95FD8A058A24}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "Core\Core.csproj", "{01536E80-406C-4D60-B22B-95FD8A058A24}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BackupToHtmlConsole", "BackupToHtmlConsole\BackupToHtmlConsole.csproj", "{20FE255D-CAE4-4ED3-AA71-2BC308E85A34}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BackupToHtmlConsole", "BackupToHtmlConsole\BackupToHtmlConsole.csproj", "{20FE255D-CAE4-4ED3-AA71-2BC308E85A34}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -196,7 +196,7 @@ namespace M365.TeamsBackup.Core.Data
             System.IO.Directory.CreateDirectory(fullpath);
             return fullpath;
         }
-        public static string GetOutputMessageFile(string root, string teamId, string channelId, string messageId, string? messageReplyId = null)
+        public static string GetOutputMessageFile(string root, string teamId, string channelId, string messageId, string messageReplyId = null)
         {
             var fullpath = System.IO.Path.Combine(GetOutputPath(root, teamId, channelId, messageId), $"{messageId}.html");
             return fullpath;

@@ -1,4 +1,5 @@
 ﻿using M365.TeamsBackup.Core.Services;
+using M365.TeamsBackup.Core.Services.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -41,8 +42,25 @@ namespace M365.TeamsBackup.Core.Data
         {
             //Request all properties
             var detailRequest = _GraphClientService.GetGraphClient(_Logger).Teams[_TeamId].Channels[_ChannelId].Request();
-            _Logger.LogTrace($"GraphURI: {detailRequest.RequestUrl}");
-            var detail = await detailRequest.GetAsync();
+
+            Channel detail = null;
+            for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+            {
+                try
+                {
+                    _Logger.LogTrace($"GraphURI({i}): {detailRequest.RequestUrl}");
+                    detail = await detailRequest.GetAsync();
+                    break;
+                }
+                catch (ServiceException mgsex)
+                {
+                    if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                    {
+                        throw;
+                    }
+                }
+            }
+
 
             _SaveMembers = detail.MembershipType == ChannelMembershipType.Private;
 
@@ -59,8 +77,24 @@ namespace M365.TeamsBackup.Core.Data
             var listMember = new List<AadUserConversationMember>();
             do
             {
-                _Logger.LogTrace($"MembersGraphURI: {memberPageRequest.RequestUrl}");
-                var memberPage = await memberPageRequest.GetAsync();
+
+                IChannelMembersCollectionPage memberPage = null;
+                for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+                {
+                    try
+                    {
+                        _Logger.LogTrace($"MembersGraphURI({i}): {memberPageRequest.RequestUrl}");
+                        memberPage = await memberPageRequest.GetAsync();
+                        break;
+                    }
+                    catch (ServiceException mgsex)
+                    {
+                        if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                        {
+                            throw;
+                        }
+                    }
+                }
 
                 foreach (AadUserConversationMember member in memberPage)
                 {

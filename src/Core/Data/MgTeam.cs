@@ -1,4 +1,5 @@
 ﻿using M365.TeamsBackup.Core.Services;
+using M365.TeamsBackup.Core.Services.Util;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.Graph;
@@ -36,8 +37,24 @@ namespace M365.TeamsBackup.Core.Data
         {
             //Request all properties
             var request = _GraphClientService.GetGraphClient(_Logger).Teams[_TeamId].Request();
-            _Logger.LogTrace($"GraphURI: {request.RequestUrl}");
-            var detail = await request.GetAsync();
+
+            Team detail = null;
+            for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+            {
+                try
+                {
+                    _Logger.LogTrace($"GraphURI({i}): {request.RequestUrl}");
+                    detail = await request.GetAsync();
+                    break;
+                }
+                catch (ServiceException mgsex)
+                {
+                    if (!await MgGraphRequester.ShouldContinue(mgsex, i))
+                    {
+                        throw;
+                    }
+                }
+            }
 
             var jsonFile = GetBackupTeamFile(_Options.Path, _TeamId);
             using System.IO.FileStream fs = System.IO.File.Create(jsonFile);
@@ -53,9 +70,24 @@ namespace M365.TeamsBackup.Core.Data
             var listMember = new List<AadUserConversationMember>();
             do
             {
-                _Logger.LogTrace($"MembersGraphURI: {memberPageRequest.RequestUrl}");
-                
-                var memberPage = await memberPageRequest.GetAsync();
+
+                ITeamMembersCollectionPage memberPage = null;
+                for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
+                {
+                    try
+                    {
+                        _Logger.LogTrace($"MembersGraphURI({i}): {memberPageRequest.RequestUrl}");
+                        memberPage = await memberPageRequest.GetAsync();
+                        break;
+                    }
+                    catch (ServiceException mgsex)
+                    {
+                        if(!await MgGraphRequester.ShouldContinue(mgsex, i))
+                        {
+                            throw;
+                        }
+                    }
+                }
 
                 foreach (AadUserConversationMember member in memberPage)
                 {
