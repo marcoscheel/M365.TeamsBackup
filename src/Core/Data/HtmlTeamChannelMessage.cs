@@ -99,9 +99,8 @@ namespace M365.TeamsBackup.Core.Data
 
         #region Save
 
-        public async Task GetHtml(HtmlNode node)
+        public async Task<HtmlNode> GetHtml(HtmlDocument htmlDocument)
         {
-            var htmlDocument = node.OwnerDocument;
             if (_Message == null)
             {
                 await LoadMessage();
@@ -110,15 +109,15 @@ namespace M365.TeamsBackup.Core.Data
             {
                 await LoadReplies();
             }
-
             var threadNode = htmlDocument.CreateElement("thread");
-            node.AppendChild(threadNode);
             GetHtmlForPost(threadNode, _Message);
 
             foreach (var reply in _Replies.OrderBy(r => r.CreatedDateTime ))
             {
                 GetHtmlForPost(threadNode, reply);
             }
+
+            return threadNode;
         }
 
         private void GetHtmlForPost(HtmlNode threadNode, ChatMessage message)
@@ -140,10 +139,6 @@ namespace M365.TeamsBackup.Core.Data
             if (message.LastEditedDateTime != null)
             {
                 messageInfoNode.InnerHtml += " | Edited: " + message.LastEditedDateTime.Value.ToString(_Options.DateTimeFormat);
-            }
-            if (message.From?.User != null)
-            {
-                messageInfoNode.InnerHtml += " | Author: " + message.From.User.DisplayName;
             }
             if (message.From?.User != null)
             {
@@ -178,11 +173,33 @@ namespace M365.TeamsBackup.Core.Data
 
                             var blobFileName = MgTeamChannelMessage.GetBackupMessageHostedContentBlob(_Options.SourcePath, _TeamId, _ChannelId, message, hostedContentid);
 
-                            var blobFileb64 = System.Convert.ToBase64String(System.IO.File.ReadAllBytes(blobFileName));
+                            if (_Options.UseInlineImages)
+                            {
+                                var blobFileb64 = System.Convert.ToBase64String(System.IO.File.ReadAllBytes(blobFileName));
+                                imgNode.SetAttributeValue("src", $"data:image/png;base64,{blobFileb64}");
 
-                            imgNode.SetAttributeValue("src", $"data:image/png;base64,{blobFileb64}");
+                            }
+                            else
+                            {
+                                string outFilename = null;
+                                if (message.ReplyToId == null)
+                                {
+                                    outFilename = GetOutputMessageImgFile(_Options.TargetPath, _TeamId, _ChannelId, message.Id, null, System.IO.Path.GetFileName(blobFileName));
+                                }
+                                else
+                                {
+                                    outFilename = GetOutputMessageImgFile(_Options.TargetPath, _TeamId, _ChannelId, message.ReplyToId, message.Id , System.IO.Path.GetFileName(blobFileName));
+
+                                }
+                                System.IO.File.Copy(blobFileName, outFilename, true);
+
+                                imgNode.SetAttributeValue("src", $"./img/{System.IO.Path.GetFileName(outFilename)}");
+                            }
+
                             imgNode.SetAttributeValue("class", "hc");
                         }
+
+                        imgNode.SetAttributeValue("style", "");
                     }
                 }
 
@@ -194,6 +211,17 @@ namespace M365.TeamsBackup.Core.Data
         {
             var fullpath = HtmlTeamChannel.GetOutputPath(root, teamId, channelId);
             System.IO.Directory.CreateDirectory(fullpath);
+            return fullpath;
+        }
+        public static string GetOutputImgPath(string root, string teamId, string channelId, string messageId)
+        {
+            var fullpath = HtmlTeamChannel.GetOutputPath(root, teamId, $"{channelId}\\img");
+            System.IO.Directory.CreateDirectory(fullpath);
+            return fullpath;
+        }
+        public static string GetOutputMessageImgFile(string root, string teamId, string channelId, string messageId, string messageReplyId, string filename)
+        {
+            var fullpath = System.IO.Path.Combine(GetOutputImgPath(root, teamId, channelId, messageId), $"{filename}");
             return fullpath;
         }
         public static string GetOutputMessageFile(string root, string teamId, string channelId, string messageId, string messageReplyId = null)

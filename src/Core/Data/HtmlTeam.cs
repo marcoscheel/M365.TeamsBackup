@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
@@ -66,11 +67,37 @@ namespace M365.TeamsBackup.Core.Data
             _Logger.LogTrace($"Load: {_Team.Id} - {_Team.DisplayName} - {_Members.Count}");
         }
 
-        public async Task Save()
+        public async Task<HtmlNode> GetHtml(HtmlDocument htmlDocument)
         {
             if (_Team == null)
             {
-                await Load();
+                await LoadTeam();
+            }
+            if (_Members == null)
+            {
+                await LoadMembers();
+            }
+
+            var teamNode = htmlDocument.CreateElement("team");
+            GetHtmlForTeam(teamNode);
+
+            return teamNode;
+        }
+
+        private void GetHtmlForTeam(HtmlNode teamNode)
+        {
+            var htmlDocument = teamNode.OwnerDocument;
+            var teamSubjectNode = htmlDocument.CreateElement("h1");
+            teamNode.AppendChild(teamSubjectNode);
+            teamSubjectNode.InnerHtml = _Team.DisplayName;
+
+            var TeamMetatNode = htmlDocument.CreateElement("teammeta");
+            teamNode.AppendChild(TeamMetatNode);
+            TeamMetatNode.InnerHtml = $"Created: {_Team.CreatedDateTime} | Members: {_Members.Count}";
+
+            if (!string.IsNullOrEmpty(_Team.Classification))
+            {
+                TeamMetatNode.InnerHtml += $"| Classification: {_Team.Classification}";
             }
         }
 

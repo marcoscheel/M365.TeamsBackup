@@ -4,7 +4,7 @@
     <TargetFramework>net5.0</TargetFramework>
     <AssemblyName>M365.TeamsBackup.Core</AssemblyName>
     <RootNamespace>M365.TeamsBackup.Core</RootNamespace>
-    <Version>0.1.1</Version>
+    <Version>0.1.2</Version>
     <Authors>Marco Scheel</Authors>
     <Product>M365.TeamsBackup</Product>
   </PropertyGroup>

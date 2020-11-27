@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using HtmlAgilityPack;
+using Microsoft.Extensions.Logging;
 using Microsoft.Graph;
 using System;
 using System.Collections.Generic;
@@ -68,26 +69,46 @@ namespace M365.TeamsBackup.Core.Data
             }
         }
 
-        public async Task Save()
-        {
-            if (_Channel == null)
-            {
-                await LoadChannel();
-            }
-            if (_Members == null)
-            {
-                await LoadMembers();
-            }
-
-            //TODO: Save
-        }
-
         public static string GetOutputPath(string root, string teamId, string channelId)
         {
             var fullpath = System.IO.Path.Combine(HtmlTeam.GetOutputPath(root, teamId), channelId.Replace(':', '-').Replace('@', '-'));
             System.IO.Directory.CreateDirectory(fullpath);
             return fullpath;
         }
+
+        public async Task<HtmlNode> GetHtml(HtmlDocument htmlDocument)
+        {
+            if (_Channel == null)
+            {
+                await LoadChannel();
+            }
+            if (_Channel == null)
+            {
+                await LoadMembers();
+            }
+
+            var channelNode = htmlDocument.CreateElement("channel");
+            GetHtmlForChannel(channelNode);
+
+            return channelNode;
+        }
+
+        private void GetHtmlForChannel(HtmlNode channelNode)
+        {
+            var htmlDocument = channelNode.OwnerDocument;
+            var channelSubjectNode = htmlDocument.CreateElement("h1");
+            channelNode.AppendChild(channelSubjectNode);
+            channelSubjectNode.InnerHtml = _Channel.DisplayName;
+
+
+            if (_Channel.MembershipType == ChannelMembershipType.Private)
+            {
+                var channelMetatNode = htmlDocument.CreateElement("channelmeta");
+                channelNode.AppendChild(channelMetatNode);
+                channelMetatNode.InnerHtml = $"Private - Members: {_Members.Count}";
+            }
+        }
+
         public static string GetOutputChannelFile(string root, string teamId, string channelId)
         {
             var fullpath = System.IO.Path.Combine(GetOutputPath(root, teamId, channelId), "channel.html");

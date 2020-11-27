@@ -40,9 +40,14 @@ namespace M365.TeamsBackup.Core.Services
                 var teamDir = new System.IO.DirectoryInfo(teamPath);
                 _Logger.LogInformation($"Team: {teamDir.Name}");
 
+                var htmlTeamDocument = new HtmlDocument();
+
                 var htmlTeam = new HtmlTeam(_LoggerHtmlTeam, _Options, teamDir.Name);
                 await htmlTeam.Load();
                 
+                var teamHead = await htmlTeam.GetHtml(htmlTeamDocument);
+
+
                 _Logger.LogInformation($"Team: {htmlTeam.Team.Id} - {htmlTeam.Team.DisplayName}");
 
                 foreach (var channelDir in teamDir.EnumerateDirectories())
@@ -52,9 +57,18 @@ namespace M365.TeamsBackup.Core.Services
                     var htmlChannel = new HtmlTeamChannel(_LoggerHtmlTeamChannel, _Options, htmlTeam.Team.Id , channelDir.Name);
                     await htmlChannel.Load();
 
+                    var htmlChannelDocument = new HtmlDocument();
+                    htmlChannelDocument.Load(_Options.TemplateFile);
+
+                    var channelBodyNode = htmlChannelDocument.DocumentNode.SelectSingleNode(".//body");
+                    channelBodyNode.AppendChild(teamHead);
+
+                    var channelHead = await htmlChannel.GetHtml(htmlChannelDocument);
+                    channelBodyNode.AppendChild(channelHead);
+
                     _Logger.LogInformation($"Channel: {htmlChannel.Channel.Id} - {htmlChannel.Channel.DisplayName} - {htmlChannel.Channel.MembershipType}");
 
-                    foreach (var messageDir in channelDir.EnumerateDirectories())
+                    foreach (var messageDir in channelDir.EnumerateDirectories().OrderBy(d => Convert.ToInt64(d.Name))) //Just a hack! Load all messages and reply and oder by last reply of a thread
                     {
                         _Logger.LogInformation($"Message: {messageDir.Name}");
 
@@ -62,15 +76,24 @@ namespace M365.TeamsBackup.Core.Services
                         await htmlMessage.Load();
                         _Logger.LogInformation($"Message: {htmlMessage.Message.Id}");
 
-                        var htmlDocument = new HtmlDocument();
-                        htmlDocument.Load(_Options.TemplateFile);
-                        var bodyNode = htmlDocument.DocumentNode.SelectSingleNode(".//body");
+                        var htmlMessageDocument = new HtmlDocument();
+                        htmlMessageDocument.Load(_Options.TemplateFile);
+                        var messageBodyNode = htmlMessageDocument.DocumentNode.SelectSingleNode(".//body");
                         
-                        await htmlMessage.GetHtml(bodyNode);
+                        var thread = await htmlMessage.GetHtml(htmlMessageDocument);
+                        messageBodyNode.AppendChild(thread);
 
-                        htmlDocument.Save(HtmlTeamChannelMessage.GetOutputMessageFile(_Options.TargetPath, htmlTeam.Team.Id, htmlChannel.Channel.Id, htmlMessage.Message.Id));
+                        if (_Options.CreateSingleHtmlForMessage)
+                        {
+                            htmlMessageDocument.Save(HtmlTeamChannelMessage.GetOutputMessageFile(_Options.TargetPath, htmlTeam.Team.Id, htmlChannel.Channel.Id, htmlMessage.Message.Id));
+                        }
+                        //add to channel
+                        channelBodyNode.AppendChild(thread);
                     }
+                    htmlChannelDocument.Save(HtmlTeamChannel.GetOutputChannelFile(_Options.TargetPath, htmlTeam.Team.Id, htmlChannel.Channel.Id));
                 }
+
+
             }
 
         }
