@@ -341,3 +341,4 @@ healthchecksdb
 
 # M365.TeamsBackup
 /data
+/publish
