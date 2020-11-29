@@ -33,7 +33,7 @@ Create a teams app as a global admin in your tenant.
   - Grant admion consent for ORG
 
 ### BackupToHtmlConsole
-appsettings.(Development|Production).json
+appsettings(.Development|.Production).json
 -  M365
   - AzureAd
     - Instance: Should be https://login.microsoftonline.com in most cases
