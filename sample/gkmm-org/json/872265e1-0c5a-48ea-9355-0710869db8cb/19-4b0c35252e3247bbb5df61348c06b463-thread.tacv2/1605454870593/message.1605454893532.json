@@ -1,0 +1,60 @@
+{
+  "Attachments": [],
+  "Body": {
+    "Content": "Or edit this",
+    "ContentType": 0,
+    "AdditionalData": null,
+    "ODataType": "microsoft.graph.itemBody"
+  },
+  "ChannelIdentity": {
+    "ChannelId": "19:4b0c35252e3247bbb5df61348c06b463@thread.tacv2",
+    "TeamId": "872265e1-0c5a-48ea-9355-0710869db8cb",
+    "AdditionalData": null,
+    "ODataType": "microsoft.graph.channelIdentity"
+  },
+  "ChatId": null,
+  "CreatedDateTime": "2020-11-15T15:41:33.532+00:00",
+  "DeletedDateTime": null,
+  "Etag": "1605454913118",
+  "From": {
+    "Application": null,
+    "Device": null,
+    "User": {
+      "DisplayName": "ADM CloudAdmin MSDN",
+      "Id": "6b6ed07f-30aa-45f6-b0b0-a8f5206d8dad",
+      "AdditionalData": {
+        "userIdentityType": "aadUser"
+      },
+      "ODataType": "microsoft.graph.identity"
+    },
+    "AdditionalData": {
+      "application": null,
+      "device": null,
+      "conversation": null
+    },
+    "ODataType": "microsoft.graph.identitySet"
+  },
+  "Importance": 0,
+  "LastEditedDateTime": "2020-11-15T15:41:53.017+00:00",
+  "LastModifiedDateTime": "2020-11-15T15:41:53.118+00:00",
+  "Locale": "en-us",
+  "Mentions": [],
+  "MessageType": 0,
+  "PolicyViolation": null,
+  "Reactions": [],
+  "ReplyToId": "1605454870593",
+  "Subject": null,
+  "Summary": null,
+  "WebUrl": "https://teams.microsoft.com/l/message/19%3A4b0c35252e3247bbb5df61348c06b463%40thread.tacv2/1605454893532?groupId=872265e1-0c5a-48ea-9355-0710869db8cb\u0026tenantId=052c8489-1e3c-450e-9b79-233d8604e40a\u0026createdTime=1605454893532\u0026parentMessageId=1605454870593",
+  "HostedContents": null,
+  "Replies": null,
+  "Id": "1605454893532",
+  "ODataType": "microsoft.graph.chatMessage",
+  "AdditionalData": {
+    "deletedDateTime": null,
+    "subject": null,
+    "summary": null,
+    "chatId": null,
+    "policyViolation": null
+  }
+}

@@ -1,0 +1,12 @@
+[
+  {
+    "ContentBytes": null,
+    "ContentType": null,
+    "Id": "aWQ9eF8wLXdjZGUtZDQtNjhiMzIzNTU2ZmY0ODIzMTI4NzBlNzI1NjQ0OTJiZmQsdHlwZT0xLHVybD1odHRwczovL2RlLXByb2QuYXN5bmNndy50ZWFtcy5taWNyb3NvZnQuY29tL3YxL29iamVjdHMvMC13Y2RlLWQ0LTY4YjMyMzU1NmZmNDgyMzEyODcwZTcyNTY0NDkyYmZkL3ZpZXdzL2ltZ28=",
+    "ODataType": "microsoft.graph.chatMessageHostedContent",
+    "AdditionalData": {
+      "contentBytes": null,
+      "contentType": null
+    }
+  }
+]

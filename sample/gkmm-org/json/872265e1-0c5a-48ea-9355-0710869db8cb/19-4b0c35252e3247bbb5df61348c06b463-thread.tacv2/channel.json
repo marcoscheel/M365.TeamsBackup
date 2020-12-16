@@ -1,0 +1,48 @@
+{
+  "CreatedDateTime": "2020-03-21T20:39:20.834+00:00",
+  "Description": " ",
+  "DisplayName": "General",
+  "Email": "",
+  "IsFavoriteByDefault": null,
+  "MembershipType": 0,
+  "ModerationSettings": null,
+  "WebUrl": "https://teams.microsoft.com/l/channel/19%3a4b0c35252e3247bbb5df61348c06b463%40thread.tacv2/General?groupId=872265e1-0c5a-48ea-9355-0710869db8cb\u0026tenantId=052c8489-1e3c-450e-9b79-233d8604e40a",
+  "FilesFolder": null,
+  "Members": null,
+  "Messages": null,
+  "Tabs": null,
+  "Id": "19:4b0c35252e3247bbb5df61348c06b463@thread.tacv2",
+  "ODataType": "microsoft.graph.channel",
+  "AdditionalData": {
+    "@odata.context": "https://graph.microsoft.com/beta/$metadata#teams(\u0027872265e1-0c5a-48ea-9355-0710869db8cb\u0027)/channels/$entity",
+    "isFavoriteByDefault": null,
+    "moderationSettings": null,
+    "responseHeaders": {
+      "Cache-Control": [
+        []
+      ],
+      "Vary": [
+        []
+      ],
+      "request-id": [
+        []
+      ],
+      "client-request-id": [
+        []
+      ],
+      "x-ms-ags-diagnostic": [
+        []
+      ],
+      "OData-Version": [
+        []
+      ],
+      "Strict-Transport-Security": [
+        []
+      ],
+      "Date": [
+        []
+      ]
+    },
+    "statusCode": "OK"
+  }
+}

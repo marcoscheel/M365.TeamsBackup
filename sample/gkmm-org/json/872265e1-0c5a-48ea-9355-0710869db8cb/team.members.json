@@ -1,0 +1,68 @@
+[
+  {
+    "Email": "rose@gkmm.org",
+    "UserId": "6976c02a-318e-4ae0-a71c-4d5a2d89df4a",
+    "User": null,
+    "DisplayName": "Rose Tico",
+    "Roles": [],
+    "Id": "ODcyMjY1ZTEtMGM1YS00OGVhLTkzNTUtMDcxMDg2OWRiOGNiIyM2OTc2YzAyYS0zMThlLTRhZTAtYTcxYy00ZDVhMmQ4OWRmNGE=",
+    "ODataType": "#microsoft.graph.aadUserConversationMember",
+    "AdditionalData": null
+  },
+  {
+    "Email": "paige@gkmm.org",
+    "UserId": "9e796542-93c4-4cc7-9e6d-665fec157b16",
+    "User": null,
+    "DisplayName": "Paige Tico",
+    "Roles": [],
+    "Id": "ODcyMjY1ZTEtMGM1YS00OGVhLTkzNTUtMDcxMDg2OWRiOGNiIyM5ZTc5NjU0Mi05M2M0LTRjYzctOWU2ZC02NjVmZWMxNTdiMTY=",
+    "ODataType": "#microsoft.graph.aadUserConversationMember",
+    "AdditionalData": null
+  },
+  {
+    "Email": "cloudadmin@gkmm.org",
+    "UserId": "6b6ed07f-30aa-45f6-b0b0-a8f5206d8dad",
+    "User": null,
+    "DisplayName": "ADM CloudAdmin MSDN",
+    "Roles": [
+      "owner"
+    ],
+    "Id": "ODcyMjY1ZTEtMGM1YS00OGVhLTkzNTUtMDcxMDg2OWRiOGNiIyM2YjZlZDA3Zi0zMGFhLTQ1ZjYtYjBiMC1hOGY1MjA2ZDhkYWQ=",
+    "ODataType": "#microsoft.graph.aadUserConversationMember",
+    "AdditionalData": null
+  },
+  {
+    "Email": "leia@gkmm.org",
+    "UserId": "855b0592-1dc5-419b-91de-002cb3e91a23",
+    "User": null,
+    "DisplayName": "Leia Organa",
+    "Roles": [
+      "owner"
+    ],
+    "Id": "ODcyMjY1ZTEtMGM1YS00OGVhLTkzNTUtMDcxMDg2OWRiOGNiIyM4NTViMDU5Mi0xZGM1LTQxOWItOTFkZS0wMDJjYjNlOTFhMjM=",
+    "ODataType": "#microsoft.graph.aadUserConversationMember",
+    "AdditionalData": null
+  },
+  {
+    "Email": "ello@gkmm.org",
+    "UserId": "4ec60f9c-67d7-49b7-82ae-c6985c77ea16",
+    "User": null,
+    "DisplayName": "Ello Asty",
+    "Roles": [
+      "owner"
+    ],
+    "Id": "ODcyMjY1ZTEtMGM1YS00OGVhLTkzNTUtMDcxMDg2OWRiOGNiIyM0ZWM2MGY5Yy02N2Q3LTQ5YjctODJhZS1jNjk4NWM3N2VhMTY=",
+    "ODataType": "#microsoft.graph.aadUserConversationMember",
+    "AdditionalData": null
+  },
+  {
+    "Email": "wrobie@gkmm.org",
+    "UserId": "9c91a3d5-ecfb-4d39-8488-c71a5f36372f",
+    "User": null,
+    "DisplayName": "Wrobie Tyce",
+    "Roles": [],
+    "Id": "ODcyMjY1ZTEtMGM1YS00OGVhLTkzNTUtMDcxMDg2OWRiOGNiIyM5YzkxYTNkNS1lY2ZiLTRkMzktODQ4OC1jNzFhNWYzNjM3MmY=",
+    "ODataType": "#microsoft.graph.aadUserConversationMember",
+    "AdditionalData": null
+  }
+]

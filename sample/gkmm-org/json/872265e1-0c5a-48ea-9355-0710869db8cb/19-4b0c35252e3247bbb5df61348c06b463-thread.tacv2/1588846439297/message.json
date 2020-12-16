@@ -1,0 +1,76 @@
+{
+  "Attachments": [
+    {
+      "Content": "{\u0022exchangeId\u0022:\u0022AAMkAGQyYTYxNmQ0LWY4NjQtNDc1Mi1iMThlLTVlMzdlZWY4OTMyOABGAAAAAABeNjninXhgTLsQ408RjL_OBwBWtE526N0LS5wFulP1hRaGAAAAAAENAABWtE526N0LS5wFulP1hRaGAAAcSV8wAAA=\u0022,\u0022organizerId\u0022:\u0022855b0592-1dc5-419b-91de-002cb3e91a23\u0022}",
+      "ContentType": "meetingReference",
+      "ContentUrl": null,
+      "Id": "1588846442482",
+      "Name": "CHannel meeting Demo",
+      "ThumbnailUrl": null,
+      "AdditionalData": {
+        "contentUrl": null,
+        "thumbnailUrl": null
+      },
+      "ODataType": "microsoft.graph.chatMessageAttachment"
+    }
+  ],
+  "Body": {
+    "Content": "Scheduled a meeting\u003Cattachment id=\u00221588846442482\u0022\u003E\u003C/attachment\u003E",
+    "ContentType": 1,
+    "AdditionalData": null,
+    "ODataType": "microsoft.graph.itemBody"
+  },
+  "ChannelIdentity": {
+    "ChannelId": "19:4b0c35252e3247bbb5df61348c06b463@thread.tacv2",
+    "TeamId": "872265e1-0c5a-48ea-9355-0710869db8cb",
+    "AdditionalData": null,
+    "ODataType": "microsoft.graph.channelIdentity"
+  },
+  "ChatId": null,
+  "CreatedDateTime": "2020-05-07T10:13:59.297+00:00",
+  "DeletedDateTime": null,
+  "Etag": "1588846444081",
+  "From": {
+    "Application": null,
+    "Device": null,
+    "User": {
+      "DisplayName": "orgid:855b0592-1dc5-419b-91de-002cb3e91a23",
+      "Id": "855b0592-1dc5-419b-91de-002cb3e91a23",
+      "AdditionalData": {
+        "userIdentityType": "aadUser"
+      },
+      "ODataType": "microsoft.graph.identity"
+    },
+    "AdditionalData": {
+      "application": null,
+      "device": null,
+      "conversation": null
+    },
+    "ODataType": "microsoft.graph.identitySet"
+  },
+  "Importance": 0,
+  "LastEditedDateTime": null,
+  "LastModifiedDateTime": "2020-05-07T10:14:04.081+00:00",
+  "Locale": "en-us",
+  "Mentions": [],
+  "MessageType": 0,
+  "PolicyViolation": null,
+  "Reactions": [],
+  "ReplyToId": null,
+  "Subject": null,
+  "Summary": null,
+  "WebUrl": "https://teams.microsoft.com/l/message/19%3A4b0c35252e3247bbb5df61348c06b463%40thread.tacv2/1588846439297?groupId=872265e1-0c5a-48ea-9355-0710869db8cb\u0026tenantId=052c8489-1e3c-450e-9b79-233d8604e40a\u0026createdTime=1588846439297\u0026parentMessageId=1588846439297",
+  "HostedContents": null,
+  "Replies": null,
+  "Id": "1588846439297",
+  "ODataType": "microsoft.graph.chatMessage",
+  "AdditionalData": {
+    "replyToId": null,
+    "lastEditedDateTime": null,
+    "deletedDateTime": null,
+    "subject": null,
+    "summary": null,
+    "chatId": null,
+    "policyViolation": null
+  }
+}
