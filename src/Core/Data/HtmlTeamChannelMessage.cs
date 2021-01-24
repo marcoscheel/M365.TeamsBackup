@@ -192,6 +192,8 @@ namespace M365.TeamsBackup.Core.Data
 
                                 }
                                 System.IO.File.Copy(blobFileName, outFilename, true);
+                                System.IO.File.SetCreationTime(outFilename, message.CreatedDateTime.Value.DateTime);
+                                System.IO.File.SetLastWriteTime(outFilename, message.CreatedDateTime.Value.DateTime);
 
                                 imgNode.SetAttributeValue("src", $"./img/{System.IO.Path.GetFileName(outFilename)}");
                             }

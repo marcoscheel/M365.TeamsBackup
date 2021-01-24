@@ -111,11 +111,18 @@ namespace M365.TeamsBackup.Core.Data
             System.IO.Directory.CreateDirectory(fullpath);
             return fullpath;
         }
+
         public static string GetBackupTeamFile(string root, string teamId)
         {
             var fullpath = System.IO.Path.Combine(GetBackupPath(root, teamId), "team.json");
             return fullpath;
         }
+        public static string GetBackupTeamZipFile(string root, string teamId)
+        {
+            var fullpath = System.IO.Path.Combine(root, $"{teamId}.zip");
+            return fullpath;
+        }
+
         public static string GetBackupTeamMembersFile(string root, string teamId)
         {
             var fullpath = System.IO.Path.Combine(GetBackupPath(root, teamId), "team.members.json");

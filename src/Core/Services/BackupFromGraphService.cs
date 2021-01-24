@@ -34,8 +34,10 @@ namespace M365.TeamsBackup.Core.Services
         public async Task Execute()
         {
             _Logger.LogInformation($"Version: {Core.Config.App.Version}");
-            _Logger.LogInformation($"Start backup at folder: {_Options.Path}");
-
+            if (_Options.ShouldZip)
+            {
+                _Logger.LogInformation($"Zip backup folder: {_Options.Path}");
+            }
 
             //Get teams
             var teamsPageRequestBase = 
@@ -56,7 +58,7 @@ namespace M365.TeamsBackup.Core.Services
                 _Logger.LogTrace($"GraphUri: {teamsPageRequest.RequestUrl}");
 
 
-                IUserJoinedTeamsCollectionPage teamsPage = null;
+                IUserJoinedTeamsCollectionWithReferencesPage teamsPage = null;
                 for (int i = 1; i <= MgGraphRequester.MaxRetry; i++)
                 {
                     try
@@ -187,6 +189,26 @@ namespace M365.TeamsBackup.Core.Services
                         channelPageRequest = channelPage.NextPageRequest;
                     }
                     while (channelPageRequest != null);
+
+
+                    if (_Options.ShouldZip)
+                    {
+                        var zipfile = MgTeam.GetBackupTeamZipFile(_Options.Path, team.Id);
+
+                        try
+                        {
+                            _Logger.LogInformation($"Zip Team: {team.Id} - {team.DisplayName} - {zipfile}");
+                            if (System.IO.File.Exists(zipfile))
+                            {
+                                System.IO.File.Delete(zipfile);
+                            }
+                            System.IO.Compression.ZipFile.CreateFromDirectory(MgTeam.GetBackupPath(_Options.Path, team.Id), zipfile);
+                        }
+                        catch (Exception ex)
+                        {
+                            _Logger.LogError(ex, $"Team zip error: {zipfile}");
+                        }
+                    }
                 }
                 teamsPageRequest = teamsPage.NextPageRequest;
             }

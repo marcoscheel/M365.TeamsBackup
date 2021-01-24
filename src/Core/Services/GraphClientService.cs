@@ -32,7 +32,6 @@ namespace M365.TeamsBackup.Core.Services
                 _PublicClientApplication = PublicClientApplicationBuilder
                     .Create(_Options.ClientId)
                     .WithAuthority(new Uri($"{_Options.Instance}/{_Options.TenantId}"))
-                    .WithRedirectUri(_Options.ReplyUri)
                     .Build();
                 TokenCacheHelper.EnableSerialization(_PublicClientApplication.UserTokenCache);
 

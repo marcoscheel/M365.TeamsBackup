@@ -2,7 +2,7 @@
   "profiles": {
     "BackupConsole": {
       "commandName": "Project",
-      "commandLineArgs": "--environment Production"
+      "commandLineArgs": "--environment Development"
     }
   }
 }
