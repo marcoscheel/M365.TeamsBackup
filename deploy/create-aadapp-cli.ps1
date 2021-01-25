@@ -15,7 +15,7 @@ $reqGraph = @{
     resourceAccess = @()
 }
 
-(az ad sp show --id $servicePrincipalId --query oauth2Permissions | ConvertFrom-Json) | ? { $_.value -in $servicePrincipalNameOauth2Permissions} | % {
+(az ad sp show --id $servicePrincipalId --query oauth2Permissions | ConvertFrom-Json) | Where-Object { $_.value -in $servicePrincipalNameOauth2Permissions} | ForEach-Object {
     $permission = $_
 
     $delPermission = @{

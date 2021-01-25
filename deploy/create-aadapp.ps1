@@ -10,13 +10,13 @@ $servicePrincipalNameOauth2Permissions = @("Channel.ReadBasic.All", "ChannelMemb
 Connect-AzureAD;
 
 # Get MS Graph
-$servicePrincipal = Get-AzureADServicePrincipal -All $true | ? { $_.DisplayName -eq $servicePrincipalName };
+$servicePrincipal = Get-AzureADServicePrincipal -All $true | Where-Object { $_.DisplayName -eq $servicePrincipalName };
 
 # Thanks http://blog.octavie.nl/index.php/2017/09/19/create-azure-ad-app-registration-with-powershell-part-2
 $reqGraph = New-Object -TypeName "Microsoft.Open.AzureAD.Model.RequiredResourceAccess";
 $reqGraph.ResourceAppId = $servicePrincipal.AppId;
 
-$servicePrincipal.Oauth2Permissions | ? { $_.Value -in $servicePrincipalNameOauth2Permissions} | % {
+$servicePrincipal.Oauth2Permissions | Where-Object { $_.Value -in $servicePrincipalNameOauth2Permissions} | ForEach-Object {
     $permission = $_
     $delPermission = New-Object -TypeName "Microsoft.Open.AzureAD.Model.ResourceAccess" -ArgumentList $permission.Id,"Scope" #delegate permission (oauth) are always "Scope"
     $reqGraph.ResourceAccess += $delPermission
